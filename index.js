@@ -509,7 +509,10 @@ class PDFDocumentWithTables extends PDFDocument {
         // Header
 
         const addHeader = () => {
-          if (this.y >= maxY) {
+          if (
+            this.y >= maxY ||
+            this.y + 2 * computeRowHeight(table.headers, true) >= maxY
+          ) {
             this.addPage();
             this.y = this.page.margins.top;
           }
