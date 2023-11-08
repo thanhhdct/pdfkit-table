@@ -915,6 +915,8 @@ class PDFDocumentWithTables extends PDFDocument {
               height: rowHeight + columnSpacing,
             };
 
+            this.addBorder(rectCell, index);
+
             prepareRowBackground(table.headers[index], rectCell);
 
             // Allow the user to override style for rows
