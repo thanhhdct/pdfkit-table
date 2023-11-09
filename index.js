@@ -859,15 +859,15 @@ class PDFDocumentWithTables extends PDFDocument {
           }
 
           // Separation line between rows
-          separationsRow("horizontal", startX, rowBottomY);
+          // separationsRow("horizontal", startX, rowBottomY);
 
-          // review this code
-          if (row.hasOwnProperty("options")) {
-            if (row.options.hasOwnProperty("separation")) {
-              // Separation line between rows
-              separationsRow("horizontal", startX, rowBottomY, 1, 1);
-            }
-          }
+          // // review this code
+          // if (row.hasOwnProperty("options")) {
+          //   if (row.options.hasOwnProperty("separation")) {
+          //     // Separation line between rows
+          //     separationsRow("horizontal", startX, rowBottomY, 1, 1);
+          //   }
+          // }
         });
         // End datas
 
@@ -901,6 +901,14 @@ class PDFDocumentWithTables extends PDFDocument {
             width: tableWidth - startX,
             height: rowHeight + columnSpacing,
           };
+
+          if (i == 0 && options.hideHeader == true) {
+            // add the upper border line of row
+            this.lineWidth(0.5)
+              .moveTo(rectRow.x, rectRow.y)
+              .lineTo(rectRow.x + rectRow.width, rectRow.y)
+              .stroke();
+          }
 
           // add background
           // doc.addBackground(rectRow);
