@@ -52,16 +52,6 @@ class PDFDocumentWithTables extends PDFDocument {
   }
 
   addBorder({ x, y, width, height }, i) {
-    this.lineWidth(0.5)
-      .moveTo(x, y)
-      .lineTo(x + width, y)
-      .stroke();
-
-    this.lineWidth(0.5)
-      .moveTo(x, y + height)
-      .lineTo(x + width, y + height)
-      .stroke();
-
     if (i == 0) {
       this.lineWidth(0.5)
         .moveTo(x, y)
@@ -641,6 +631,7 @@ class PDFDocumentWithTables extends PDFDocument {
                   headerAlign,
                   padding,
                 } = dataHeader;
+
                 // check defination
                 width = width || columnSizes[i];
                 align = headerAlign || align || "left";
@@ -674,9 +665,15 @@ class PDFDocumentWithTables extends PDFDocument {
                 const rectCell = {
                   x: lastPositionX,
                   y: startY - columnSpacing - rowDistance * 2,
-                  width: width,
+                  width: columnSizes[i],
                   height: this.headerHeight + columnSpacing,
                 };
+
+                // add the first border line of header
+                this.lineWidth(0.5)
+                  .moveTo(rectCell.x, rectCell.y)
+                  .lineTo(rectCell.x + rectCell.width, rectCell.y)
+                  .stroke();
 
                 // vertical border of header
                 this.addBorder(rectCell, i);
@@ -695,7 +692,7 @@ class PDFDocumentWithTables extends PDFDocument {
                   align: align,
                 });
 
-                lastPositionX += width;
+                lastPositionX += columnSizes[i];
                 // this.restore(); // rotation
               });
             }
