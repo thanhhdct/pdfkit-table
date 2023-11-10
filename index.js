@@ -499,13 +499,6 @@ class PDFDocumentWithTables extends PDFDocument {
         // Header
 
         const addHeader = () => {
-          if (
-            this.y >= maxY ||
-            this.y + 2 * computeRowHeight(table.headers, true) >= maxY
-          ) {
-            this.addPage();
-            this.y = this.page.margins.top;
-          }
           // Allow the user to override style for headers
           prepareHeader();
 
@@ -544,8 +537,8 @@ class PDFDocumentWithTables extends PDFDocument {
             this.logg("CRAZY! This a big text on cell");
           } else if (calc > maxY) {
             // && !lockAddPage
-            // lockAddHeader = false;
-            lockAddPage = true;
+            lockAddHeader = false;
+            // lockAddPage = true;
             onFirePageAdded(); // this.emitter.emit('addPage'); //this.addPage();
             return;
           }
@@ -1038,8 +1031,8 @@ class PDFDocumentWithTables extends PDFDocument {
         }
 
         const len = tables.length;
-        for (let i; i < len; i++) {
-          await this.table(tables[i], tables[i].options || {});
+        for (let i = 0; i < len; i++) {
+          await this.table(tables[i].table, tables[i].options || {});
         }
 
         // if tables is Array
