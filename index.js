@@ -51,14 +51,14 @@ class PDFDocumentWithTables extends PDFDocument {
     typeof callback === "function" && callback(this);
   }
 
-  addBorder({ x, y, width, height }, i) {
-    if (i == 0) {
-      this.lineWidth(0.5)
-        .moveTo(x, y)
-        .lineTo(x, y + height)
-        .stroke();
-    }
+  addFirstVerticalLine({ x, y, width, height }) {
+    this.lineWidth(0.5)
+      .moveTo(x, y)
+      .lineTo(x, y + height)
+      .stroke();
+  }
 
+  addLastVerticalLine({ x, y, width, height }) {
     this.lineWidth(0.5)
       .moveTo(x + width, y)
       .lineTo(x + width, y + height)
@@ -668,8 +668,13 @@ class PDFDocumentWithTables extends PDFDocument {
                   .lineTo(rectCell.x + rectCell.width, rectCell.y)
                   .stroke();
 
-                // vertical border of header
-                this.addBorder(rectCell, i);
+                // first vertical border of header
+                this.addFirstVerticalLine(rectCell, i);
+
+                // last vertical border of header
+                if (i == table.headers.length - 1) {
+                  this.addLastVerticalLine(rectCell, i);
+                }
 
                 // add background
                 this.addBackground(rectCell, headerColor, headerOpacity);
@@ -895,6 +900,9 @@ class PDFDocumentWithTables extends PDFDocument {
             height: rowHeight + columnSpacing,
           };
 
+          this.addFirstVerticalLine(rectRow, i);
+          this.addLastVerticalLine(rectRow, i);
+
           if (i == 0 && options.hideHeader == true) {
             // add the upper border line of row
             this.lineWidth(0.5)
@@ -920,7 +928,7 @@ class PDFDocumentWithTables extends PDFDocument {
               height: rowHeight + columnSpacing,
             };
 
-            this.addBorder(rectCell, index);
+            this.addFirstVerticalLine(rectCell, index);
 
             prepareRowBackground(table.headers[index], rectCell);
 
@@ -969,16 +977,49 @@ class PDFDocumentWithTables extends PDFDocument {
             }
             // ------------------------------------------------------------------------------
 
-            this.text(
-              cell,
-              lastPositionX + cellPadding.left,
-              startY + topTextToAlignVertically,
-              {
-                width:
-                  columnSizes[index] - (cellPadding.left + cellPadding.right),
-                align: align,
+            if (typeof cell == "object") {
+              const { backgroundColor, backgroundOpacity } = cell;
+              const fill = backgroundColor?.toLowerCase();
+              if (fill && fill !== null) {
+                const opac = backgroundOpacity || 1;
+                this.addBackground(rectCell, fill, opac);
               }
-            );
+            } else {
+              if (String(cell).indexOf("bold:") === 0) {
+                this.font("Times-Bold");
+                cell = cell.replace("bold:", "");
+              }
+
+              const strings = cell.split("\n");
+              if (strings.length > 1) {
+                this.text(
+                  strings[0],
+                  lastPositionX + cellPadding.left,
+                  startY + topTextToAlignVertically,
+                  {
+                    width:
+                      columnSizes[index] -
+                      (cellPadding.left + cellPadding.right),
+                    align: align,
+                  }
+                )
+                  .font("Times-Italic")
+                  .text(cell.replace(`${strings[0]}\n`, ""));
+              } else
+                this.text(
+                  cell,
+                  lastPositionX + cellPadding.left,
+                  startY + topTextToAlignVertically,
+                  {
+                    width:
+                      columnSizes[index] -
+                      (cellPadding.left + cellPadding.right),
+                    align: align,
+                  }
+                );
+            }
+
+            this.font("Helvetica");
 
             lastPositionX += columnSizes[index];
           });
