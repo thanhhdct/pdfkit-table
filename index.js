@@ -74,6 +74,7 @@ class PDFDocumentWithTables extends PDFDocument {
   table(table, options, callback) {
     return new Promise((resolve, reject) => {
       try {
+        const { boldFont, italicFont, normalFont } = options;
         typeof table === "string" && (table = JSON.parse(table));
 
         table || (table = {});
@@ -143,11 +144,17 @@ class PDFDocumentWithTables extends PDFDocument {
         const prepareHeader =
           options.prepareHeader ||
           (() =>
-            this.fillColor("black").font("Helvetica-Bold").fontSize(8).fill());
+            this.fillColor("black")
+              .font(boldFont || "Helvetica-Bold")
+              .fontSize(8)
+              .fill());
         const prepareRow =
           options.prepareRow ||
           ((row, indexColumn, indexRow, rectRow, rectCell) =>
-            this.fillColor("black").font("Helvetica").fontSize(8).fill());
+            this.fillColor("black")
+              .font(normalFont || "Helvetica")
+              .fontSize(8)
+              .fill());
         //const prepareCell      = options.prepareCell || ((cell, indexColumn, indexRow, indexCell, rectCell) => this.fillColor('black').font("Helvetica").fontSize(8).fill());
 
         let tableWidth = 0;
@@ -793,7 +800,7 @@ class PDFDocumentWithTables extends PDFDocument {
 
             // bold
             if (String(text).indexOf("bold:") === 0) {
-              this.font("Helvetica-Bold");
+              this.font(boldFont || "Helvetica-Bold");
               text = text.replace("bold:", "");
             }
 
@@ -986,7 +993,7 @@ class PDFDocumentWithTables extends PDFDocument {
               }
             } else {
               if (String(cell).indexOf("bold:") === 0) {
-                this.font("Times-Bold");
+                this.font(boldFont || "Times-Bold");
                 cell = cell.replace("bold:", "");
               }
 
@@ -1003,7 +1010,7 @@ class PDFDocumentWithTables extends PDFDocument {
                     align: align,
                   }
                 )
-                  .font("Times-Italic")
+                  .font(italicFont || "Times-Italic")
                   .text(cell.replace(`${strings[0]}\n`, ""));
               } else
                 this.text(
@@ -1019,7 +1026,7 @@ class PDFDocumentWithTables extends PDFDocument {
                 );
             }
 
-            this.font("Helvetica");
+            this.font(normalFont || "Helvetica");
 
             lastPositionX += columnSizes[index];
           });
