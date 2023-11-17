@@ -426,7 +426,7 @@ class PDFDocumentWithTables extends PDFDocument {
             // console.log(cellp);
 
             // calc height size of string
-            const cellHeight = this.heightOfString(text, {
+            const cellHeight = this.heightOfString(`${text}abcd`, {
               width: columnSizes[i] - (cellp.left + cellp.right),
               align: "left",
             });
@@ -1011,7 +1011,17 @@ class PDFDocumentWithTables extends PDFDocument {
                   }
                 )
                   .font(italicFont || "Times-Italic")
-                  .text(cell.replace(`${strings[0]}\n`, ""));
+                  .text(
+                    cell.replace(`${strings[0]}\n`, ""),
+                    lastPositionX + cellPadding.left,
+                    this.y,
+                    {
+                      width:
+                        columnSizes[index] -
+                        (cellPadding.left + cellPadding.right),
+                      align: align,
+                    }
+                  );
               } else
                 this.text(
                   cell,
