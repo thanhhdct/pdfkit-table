@@ -205,7 +205,7 @@ class PDFDocumentWithTables extends PDFDocument {
             this.logg(data, titleHeight); // 24
 
             // write
-            this.text(data, startX, startY).opacity(1); // moveDown( 0.5 )
+            this.fillColor("black").text(data, startX, startY).opacity(1); // moveDown( 0.5 )
             // startY += cellHeight;
             startY = this.y + columnSpacing + 2;
             // else object
@@ -215,6 +215,7 @@ class PDFDocumentWithTables extends PDFDocument {
             data.label &&
               this.fillColor(data.color || "black")
                 .fontSize(data.fontSize || size)
+                .fillColor("black")
                 .text(data.label, startX, startY)
                 .fill();
 
@@ -426,8 +427,8 @@ class PDFDocumentWithTables extends PDFDocument {
             // console.log(cellp);
 
             // calc height size of string
-            const cellHeight = this.heightOfString(`${text}abcd`, {
-              width: columnSizes[i] - (cellp.left + cellp.right),
+            const cellHeight = this.heightOfString(`${text}`, {
+              width: columnSizes[i] - 2 * (cellp.left + cellp.right),
               align: "left",
             });
 
@@ -609,12 +610,17 @@ class PDFDocumentWithTables extends PDFDocument {
                 cellPadding = prepareCellPadding(options.padding || 0);
 
                 // write
-                this.text(header, lastPositionX + cellPadding.left, startY, {
-                  width:
-                    Number(columnSizes[i]) -
-                    (cellPadding.left + cellPadding.right),
-                  align: "left",
-                });
+                this.fillColor("black").text(
+                  header,
+                  lastPositionX + cellPadding.left,
+                  startY,
+                  {
+                    width:
+                      Number(columnSizes[i]) -
+                      (cellPadding.left + cellPadding.right),
+                    align: "left",
+                  }
+                );
 
                 lastPositionX += columnSizes[i] >> 0;
               });
@@ -692,10 +698,15 @@ class PDFDocumentWithTables extends PDFDocument {
                 );
 
                 // write
-                this.text(label, lastPositionX + cellPadding.left, startY, {
-                  width: width - (cellPadding.left + cellPadding.right),
-                  align: align,
-                });
+                this.fillColor("black").text(
+                  label,
+                  lastPositionX + cellPadding.left,
+                  startY,
+                  {
+                    width: width - (cellPadding.left + cellPadding.right),
+                    align: align,
+                  }
+                );
 
                 lastPositionX += columnSizes[i];
                 // this.restore(); // rotation
@@ -836,7 +847,7 @@ class PDFDocumentWithTables extends PDFDocument {
             }
             // ------------------------------------------------------------------------------
 
-            this.text(
+            this.fillColor("black").text(
               text,
               lastPositionX + cellPadding.left,
               startY + topTextToAlignVertically,
@@ -999,18 +1010,20 @@ class PDFDocumentWithTables extends PDFDocument {
 
               const strings = cell.split("\n");
               if (strings.length > 1) {
-                this.text(
-                  strings[0],
-                  lastPositionX + cellPadding.left,
-                  startY + topTextToAlignVertically,
-                  {
-                    width:
-                      columnSizes[index] -
-                      (cellPadding.left + cellPadding.right),
-                    align: align,
-                  }
-                )
+                this.fillColor("black")
+                  .text(
+                    strings[0],
+                    lastPositionX + cellPadding.left,
+                    startY + topTextToAlignVertically,
+                    {
+                      width:
+                        columnSizes[index] -
+                        (cellPadding.left + cellPadding.right),
+                      align: align,
+                    }
+                  )
                   .font(italicFont || "Times-Italic")
+                  .fillColor("black")
                   .text(
                     cell.replace(`${strings[0]}\n`, ""),
                     lastPositionX + cellPadding.left,
@@ -1023,7 +1036,7 @@ class PDFDocumentWithTables extends PDFDocument {
                     }
                   );
               } else
-                this.text(
+                this.fillColor("black").text(
                   cell,
                   lastPositionX + cellPadding.left,
                   startY + topTextToAlignVertically,
